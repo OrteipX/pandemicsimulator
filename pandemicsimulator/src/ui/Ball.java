@@ -5,12 +5,11 @@
 package ui;
 
 import java.awt.*;
-import person.Immunity;
-import person.Person;
+import person.*;
 
 public class Ball
 {
-    private final int MAX_PIXELS = 5;
+    public final int MAX_PIXELS = 5;
     private int m_diameter;
     private int m_xCoord;
     private int m_yCoord;
@@ -38,19 +37,20 @@ public class Ball
             }
             else
             {
-                if (person.immunityStatus() == Immunity.NO_IMMUNITY.value())
+                if (person.vaccinationStatus() == VaccinationStatus.NO_VACCINE)
                 {
                     m_color = Color.BLUE;
                 }
-                else if (person.immunityStatus() == Immunity.ONE_SHOT.value())
+                else if (person.vaccinationStatus() == VaccinationStatus.ONE_SHOT)
                 {
                     m_color = Color.CYAN;
                 }
-                else if (person.immunityStatus() == Immunity.TWO_SHOTS.value())
+                else if (person.vaccinationStatus() == VaccinationStatus.TWO_SHOTS
+                        && person.personStatus() != PersonStatus.RECOVERED)
                 {
                     m_color = Color.YELLOW;
                 }
-                else if (person.immunityStatus() == Immunity.RECOVERED.value())
+                else if (person.personStatus() == PersonStatus.RECOVERED)
                 {
                     m_color = Color.GREEN;
                 }
@@ -65,7 +65,7 @@ public class Ball
         {
             m_xCoord = (int)(Math.random() * containerWidth);
 
-            if (m_xCoord >= 0 && (m_xCoord <= containerWidth - m_diameter))
+            if (m_xCoord >= m_diameter && (m_xCoord <= (containerWidth - 2 * m_diameter)))
                 break;
         }
 
@@ -73,14 +73,19 @@ public class Ball
         {
             m_yCoord = (int)(Math.random() * containerHeight);
 
-            if (m_yCoord >= 0 && (m_yCoord <= containerWidth - m_diameter))
+            if (m_yCoord >= m_diameter && (m_yCoord <= (containerHeight - 2 * m_diameter)))
                 break;
         }
 
         while (true)
         {
-            m_xIncrement = (int)(Math.random() * (MAX_PIXELS + 1));
-            m_yIncrement = (int)(Math.random() * (MAX_PIXELS + 1));
+            int inversePoint = 1;
+
+            if ((int)(Math.random() * 2) == 1)
+                inversePoint *= -1;
+
+            m_xIncrement = (int)(Math.random() * (MAX_PIXELS + 1)) * inversePoint;
+            m_yIncrement = (int)(Math.random() * (MAX_PIXELS + 1)) * inversePoint;
 
             if (m_xIncrement != 0 && m_yIncrement != 0)
                 break;
