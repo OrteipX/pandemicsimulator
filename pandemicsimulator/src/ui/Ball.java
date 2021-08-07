@@ -45,8 +45,7 @@ public class Ball
                 {
                     m_color = Color.CYAN;
                 }
-                else if (person.vaccinationStatus() == VaccinationStatus.TWO_SHOTS
-                        && person.personStatus() != PersonStatus.RECOVERED)
+                else if (person.vaccinationStatus() == VaccinationStatus.TWO_SHOTS)
                 {
                     m_color = Color.YELLOW;
                 }

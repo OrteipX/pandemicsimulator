@@ -13,19 +13,13 @@ import ui.*;
 public class PandemicSimulator extends JFrame
 {
     private static int m_totalPercentage = 100;
-    private int m_initialPopulationSize = 1000;
-    private boolean sldPopulationSizeClicked = false;
-    private boolean sldPopulationInfectedClicked = false;
-    private boolean sldPopulationNoVaccineClicked = false;
-    private boolean sldPopulationOneShotClicked = false;
-    private boolean sldPopulationTwoShotsClicked = false;
-    private boolean sldPopulationRecoveredClicked = false;
+    private static int m_populationSize = 100;
+    private int m_populationSliderSize = 2000;
     private JFrame mainFrame;
     private JPanel pnlCenter;
     private JPanel pnlTop;
     private JPanel pnlBottom;
     private JPanel pnlLeft;
-    private JPanel pnlRight;
     private JPanel pnlLeftUpper;
     private JPanel pnlLeftBottom;
     private JSlider sldPopulationSize;
@@ -34,20 +28,24 @@ public class PandemicSimulator extends JFrame
     private JSlider sldPopulationOneShot;
     private JSlider sldPopulationTwoShots;
     private JSlider sldPopulationRecovered;
+    private JButton btnGenerate;
+    private Dimension m_dim;
 
     public PandemicSimulator()
     {
+        m_dim = Toolkit.getDefaultToolkit().getScreenSize();
+
         mainFrame = new JFrame("Pandemic Simulator");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setLayout(new BorderLayout());
-        mainFrame.setLocationRelativeTo(null);
-        mainFrame.setResizable(false);
+        mainFrame.setResizable(true);
 
         mainFrame.add(buildTopPanel(), BorderLayout.NORTH);
-        mainFrame.add(buildLeftPanel(), BorderLayout.WEST);
-
+        mainFrame.add(buildLeftPanel(), BorderLayout.CENTER);
 
         mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+
         mainFrame.setVisible(true);
     }
 
@@ -65,7 +63,8 @@ public class PandemicSimulator extends JFrame
 
     private JPanel buildLeftPanel()
     {
-        pnlLeft = new JPanel(new GridLayout(2, 1, 0, 0));
+        pnlLeft = new JPanel();
+        pnlLeft.setLayout(new BoxLayout(pnlLeft, BoxLayout.Y_AXIS));
         //pnlLeft.setPreferredSize(new Dimension(500, 600));
         pnlLeft.setBackground(Color.WHITE);
 
@@ -77,15 +76,8 @@ public class PandemicSimulator extends JFrame
 
     private JPanel buildLeftUpperPanel()
     {
-        pnlLeftUpper = new JPanel(new GridLayout(2, 1));
+        pnlLeftUpper = new JPanel(new FlowLayout());
         pnlLeftUpper.setBackground(Color.WHITE);
-
-        String titleTxt = "V1.0";
-        JLabel lblTitle = new JLabel("<html><div style='text-align: center;'>" + titleTxt + "</div></html>");
-        JPanel lblHolder = new JPanel(new FlowLayout());
-        lblHolder.add(lblTitle);
-        lblHolder.setBackground(Color.WHITE);
-        pnlLeftUpper.add(lblHolder);
 
         JButton btnAbout = new JButton("About");
         btnAbout.setPreferredSize(new Dimension(80, 30));
@@ -93,36 +85,49 @@ public class PandemicSimulator extends JFrame
             JFrame aboutFrame = new JFrame("About");
             aboutFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             aboutFrame.setLayout(new FlowLayout());
-            aboutFrame.setSize(300, 200);
+            aboutFrame.setSize(400, 400);
             aboutFrame.setLocationRelativeTo(null);
 
-            JLabel lblAboutTitle = new JLabel("<html>Pandemic Simulator<br /></html>");
+            JLabel lblAboutTitle = new JLabel("<html><div style='margin-top: 20px'><p>Pandemic Simulator</p></div><br /></html>");
+            lblAboutTitle.setFont(new Font("Serif", Font.BOLD, 16));
             aboutFrame.add(lblAboutTitle);
 
-            JLabel lblAbout = new JLabel("<html>This software is intented to simulate......<br />Andre Melo<br />Bilal Al<br />Ramon Garcia</html>");
+            String about = "<html>"
+                + "<div style='margin-top: 40px;'>"
+                + "<div>"
+                + "<p style='text-align: center'>This software was created with the aim of creating a"
+                + "<br />simulation of a pandemic and its concealment among"
+                + "<br />populations with different levels of immunity.</p>"
+                + "</div>"
+                + "<div style='margin-top: 40px'>"
+                + "<br /><p style='text-align: center'>Abdulmuamen Al Khateb</p>"
+                + "<br /><p style='text-align: center'>Andre Melo</p>"
+                + "<br /><p style='text-align: center'>Bilal Al-muhtadi</p>"
+                + "<br /><p style='text-align: center'>Ramon Garcia</p>"
+                + "</div>"
+                + "</html>";
+
+            JLabel lblAbout = new JLabel(about);
             aboutFrame.add(lblAbout);
 
             aboutFrame.setVisible(true);
         });
 
-        JPanel btnHolder = new JPanel(new FlowLayout());
-        btnHolder.setBackground(Color.WHITE);
-        btnHolder.add(btnAbout);
-        pnlLeftUpper.add(btnHolder);
+        pnlLeftUpper.add(btnAbout);
 
         return pnlLeftUpper;
     }
 
     private JPanel buildLeftBottomPanel()
     {
-        JLabel lblPopulationSize = new JLabel("Pop. Size");
-        JLabel lblPopulationInfected = new JLabel("Pop. Infected");
-        JLabel lblPopulationNoVaccine = new JLabel("Pop. No-Vax");
-        JLabel lblPopulationOneShot = new JLabel("Pop. 1-Shot");
-        JLabel lblPopulationTwoShots = new JLabel("Pop. 2-Shots");
-        JLabel lblPopulationRecovered = new JLabel("Pop. Recovered");
+        JLabel lblPopulationSize = new JLabel("Population Size:");
+        JLabel lblPopulationInfected = new JLabel("Infected:");
+        JLabel lblPopulationNoVaccine = new JLabel("Unvaccinated:");
+        JLabel lblPopulationOneShot = new JLabel("Partially-vaccinated:");
+        JLabel lblPopulationTwoShots = new JLabel("Fully-vaccinated:");
+        JLabel lblPopulationRecovered = new JLabel("Recovered:");
 
-        JLabel lblPopSizeValue = new JLabel("0", JLabel.LEFT);
+        JLabel lblPopSizeValue = new JLabel("100", JLabel.LEFT);
         JLabel lblPopInfectedValue = new JLabel("0%", JLabel.LEFT);
         JLabel lblPopNoVaccineValue = new JLabel("0%", JLabel.LEFT);
         JLabel lblPopOneShotValue = new JLabel("0%", JLabel.LEFT);
@@ -131,7 +136,7 @@ public class PandemicSimulator extends JFrame
 
         MouseListener mouseListener = new MouseListener();
 
-        sldPopulationSize = new JSlider(JSlider.HORIZONTAL, 0, m_initialPopulationSize, 0);
+        sldPopulationSize = new JSlider(JSlider.HORIZONTAL, 100, m_populationSliderSize, 100);
         sldPopulationSize.setName("POP_SIZE");
         sldPopulationSize.setBackground(Color.WHITE);
         sldPopulationSize.setPaintTicks(true);
@@ -141,14 +146,14 @@ public class PandemicSimulator extends JFrame
                     public void stateChanged(ChangeEvent ce)
                     {
                         JSlider source = (JSlider)ce.getSource();
-                        String value = String.valueOf(source.getValue());
+                        int pop = source.getValue();
+                        String value = String.valueOf(pop);
                         lblPopSizeValue.setText(value);
                     }
                 });
         sldPopulationSize.addMouseListener(mouseListener);
 
         sldPopulationInfected = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        sldPopulationInfected.setEnabled(false);
         sldPopulationInfected.setName("POP_INFECTED");
         sldPopulationInfected.setBackground(Color.WHITE);
         sldPopulationInfected.setMajorTickSpacing(25);
@@ -167,7 +172,6 @@ public class PandemicSimulator extends JFrame
         sldPopulationInfected.addMouseListener(mouseListener);
 
         sldPopulationNoVaccine = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        sldPopulationNoVaccine.setEnabled(false);
         sldPopulationNoVaccine.setName("POP_NO_VACCINE");
         sldPopulationNoVaccine.setBackground(Color.WHITE);
         sldPopulationNoVaccine.setMajorTickSpacing(25);
@@ -186,7 +190,6 @@ public class PandemicSimulator extends JFrame
         sldPopulationNoVaccine.addMouseListener(mouseListener);
 
         sldPopulationOneShot = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        sldPopulationOneShot.setEnabled(false);
         sldPopulationOneShot.setName("POP_ONE_SHOT");
         sldPopulationOneShot.setBackground(Color.WHITE);
         sldPopulationOneShot.setMajorTickSpacing(25);
@@ -205,7 +208,6 @@ public class PandemicSimulator extends JFrame
         sldPopulationOneShot.addMouseListener(mouseListener);
 
         sldPopulationTwoShots = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        sldPopulationTwoShots.setEnabled(false);
         sldPopulationTwoShots.setName("POP_TWO_SHOTS");
         sldPopulationTwoShots.setBackground(Color.WHITE);
         sldPopulationTwoShots.setMajorTickSpacing(25);
@@ -224,7 +226,6 @@ public class PandemicSimulator extends JFrame
         sldPopulationTwoShots.addMouseListener(mouseListener);
 
         sldPopulationRecovered = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        sldPopulationRecovered.setEnabled(false);
         sldPopulationRecovered.setName("POP_RECOVERED");
         sldPopulationRecovered.setBackground(Color.WHITE);
         sldPopulationRecovered.setMajorTickSpacing(25);
@@ -247,12 +248,13 @@ public class PandemicSimulator extends JFrame
             resetData();
         });
 
-        JButton btnGenerate = new JButton("Generate Scenario");
+        btnGenerate = new JButton("Generate Scenario");
+        btnGenerate.setEnabled(false);
         btnGenerate.addActionListener(ev -> {
             generateScenario();
         });
 
-        JPanel sliderHolder = new JPanel(new GridLayout(7, 3, 20, 20));
+        JPanel sliderHolder = new JPanel(new GridLayout(7, 3, 40, 30));
         sliderHolder.setBackground(Color.WHITE);
 
         sliderHolder.add(lblPopulationSize);
@@ -293,7 +295,7 @@ public class PandemicSimulator extends JFrame
     private JPanel buildBottomPanel(Simulator simulator)
     {
         pnlBottom = new JPanel(new FlowLayout());
-        pnlBottom.setBackground(Color.WHITE);
+        pnlBottom.setBackground(Color.GRAY);
 
         JButton btnStart = new JButton("Start");
         btnStart.setPreferredSize(new Dimension(80, 30));
@@ -315,72 +317,45 @@ public class PandemicSimulator extends JFrame
         return pnlBottom;
     }
 
-    private void resetData()
+    public void resetData()
     {
-        m_totalPercentage = 100;
-        m_initialPopulationSize = 1000;
-        sldPopulationSize.setMaximum(m_initialPopulationSize);
-        sldPopulationInfected.setMaximum(m_totalPercentage);
-        sldPopulationNoVaccine.setMaximum(m_totalPercentage);
-        sldPopulationOneShot.setMaximum(m_totalPercentage);
-        sldPopulationTwoShots.setMaximum(m_totalPercentage);
-        sldPopulationRecovered.setMaximum(m_totalPercentage);
+        m_populationSize = 100;
+        m_populationSliderSize = 2000;
+        sldPopulationSize.setMaximum(m_populationSliderSize);
 
+        m_totalPercentage = 100;
         sldPopulationSize.setValue(0);
         sldPopulationInfected.setValue(0);
         sldPopulationNoVaccine.setValue(0);
         sldPopulationOneShot.setValue(0);
         sldPopulationTwoShots.setValue(0);
         sldPopulationRecovered.setValue(0);
-
-        sldPopulationSize.setEnabled(true);
-        sldPopulationInfected.setEnabled(false);
-        sldPopulationNoVaccine.setEnabled(false);
-        sldPopulationOneShot.setEnabled(false);
-        sldPopulationTwoShots.setEnabled(false);
-        sldPopulationRecovered.setEnabled(false);
-
-        sldPopulationSizeClicked = false;
-        sldPopulationInfectedClicked = false;
-        sldPopulationNoVaccineClicked = false;
-        sldPopulationOneShotClicked = false;
-        sldPopulationTwoShotsClicked = false;
-        sldPopulationRecoveredClicked = false;
     }
 
     private void generateScenario()
     {
         ArrayList<Person> population = new ArrayList<Person>();
 
-        // TODO
-        // 600 PEOPLE
-        // 100% 80% 55% 20%
-        // 20% ONE SHOT
-        // 25% TWO SHOTS
-        // 35% NO IMMUNITY
-        // 20% INFECTED
-
         int sum = 0;
 
-        int populationSize = m_initialPopulationSize;
+        int populationSize = m_populationSize;
 
-        int populationInfected = populationSize * sldPopulationInfected.getValue() / 100;
+        int populationInfected = sldPopulationInfected.getValue() > 0 ? populationSize * sldPopulationInfected.getValue() / 100 : 0;
         sum += populationInfected;
 
-        int populationNoVaccine = populationSize * sldPopulationNoVaccine.getValue() / 100;
+        int populationNoVaccine = sldPopulationNoVaccine.getValue() > 0 ? populationSize * sldPopulationNoVaccine.getValue() / 100 : 0;
         sum += populationNoVaccine;
 
-        int populationOneShot = populationSize * sldPopulationOneShot.getValue() / 100;
+        int populationOneShot = sldPopulationOneShot.getValue() > 0 ? populationSize * sldPopulationOneShot.getValue() / 100 : 0;
         sum += populationOneShot;
 
-        int populationTwoShots = populationSize * sldPopulationTwoShots.getValue() / 100;
+        int populationTwoShots = sldPopulationTwoShots.getValue() > 0 ? populationSize * sldPopulationTwoShots.getValue() / 100 : 0;
         sum += populationTwoShots;
 
-        int populationRecovered = populationSize - sum;
-        System.out.println(populationRecovered);
+        int populationRecovered = sldPopulationRecovered.getValue() > 0 ? populationSize - sum : 0;
 
         for (int i = 0; i < populationInfected; ++i)
-            population.add(new Person(true, true, PersonStatus.INFECTED, VaccinationStatus.NO_VACCINE));
+            population.add(new Person(true, true, PersonStatus.INFECTED, VaccinationStatus.UNDEF));
 
         for (int i = 0; i < populationNoVaccine; ++i)
             population.add(new Person(true, false, PersonStatus.NOT_INFECTED, VaccinationStatus.NO_VACCINE));
@@ -388,149 +363,39 @@ public class PandemicSimulator extends JFrame
         for (int i = 0; i < populationOneShot; ++i)
             population.add(new Person(true, false, PersonStatus.NOT_INFECTED, VaccinationStatus.ONE_SHOT));
 
-        for (int i = 0; i < populationTwoShots; ++i);
+        for (int i = 0; i < populationTwoShots; ++i)
             population.add(new Person(true, false, PersonStatus.NOT_INFECTED, VaccinationStatus.TWO_SHOTS));
 
         for (int i = 0; i < populationRecovered; ++i)
-            population.add(new Person(true, false, PersonStatus.RECOVERED, VaccinationStatus.TWO_SHOTS));
+            population.add(new Person(true, false, PersonStatus.RECOVERED, VaccinationStatus.UNDEF_REC));
 
         Simulator simulator = new Simulator(population);
         JFrame simulationFrame = new JFrame("Simulator");
+        sldPopulationSize.setValue(population.size());
         simulationFrame.setLayout(new BorderLayout());
-        simulationFrame.setLocationRelativeTo(null);
         simulationFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         simulationFrame.setSize(simulator.width(), simulator.height());
 
         pnlCenter = new JPanel(new FlowLayout());
         pnlCenter.add(simulator);
-        simulationFrame.add(pnlCenter, BorderLayout.CENTER);
 
+        simulationFrame.add(pnlCenter, BorderLayout.CENTER);
         simulationFrame.add(buildBottomPanel(simulator), BorderLayout.SOUTH);
         simulationFrame.pack();
+        simulationFrame.setLocationRelativeTo(null);
         simulationFrame.setVisible(true);
-    }
-
-    private void setMaxSlidersValue(JSlider slider)
-    {
-        if (slider.getName().equals("POP_SIZE"))
-        {
-            if (slider.getValue() > (m_initialPopulationSize / 2))
-            {
-                sldPopulationSize.setMaximum(m_initialPopulationSize * 2);
-            }
-
-            if (sldPopulationSizeClicked)
-            {
-                sldPopulationInfected.setEnabled(true);
-            }
-        }
-        else if (slider.getName().equals("POP_INFECTED"))
-        {
-            if(slider.isEnabled())
-            {
-                sldPopulationNoVaccine.setMaximum(m_totalPercentage);
-                sldPopulationOneShot.setMaximum(m_totalPercentage);
-                sldPopulationTwoShots.setMaximum(m_totalPercentage);
-                sldPopulationRecovered.setMaximum(m_totalPercentage);
-            }
-
-            if (sldPopulationInfectedClicked)
-            {
-                sldPopulationInfected.setEnabled(false);
-                sldPopulationNoVaccine.setEnabled(true);
-                sldPopulationInfectedClicked = false;
-            }
-        }
-        else if (slider.getName().equals("POP_NO_VACCINE"))
-        {
-            if (slider.isEnabled())
-            {
-                sldPopulationOneShot.setMaximum(m_totalPercentage);
-                sldPopulationTwoShots.setMaximum(m_totalPercentage);
-                sldPopulationRecovered.setMaximum(m_totalPercentage);
-            }
-
-            if (sldPopulationNoVaccineClicked)
-            {
-                sldPopulationNoVaccine.setEnabled(false);
-                sldPopulationOneShot.setEnabled(true);
-                sldPopulationNoVaccineClicked = false;
-            }
-        }
-        else if (slider.getName().equals("POP_ONE_SHOT"))
-        {
-            if (slider.isEnabled())
-            {
-                sldPopulationTwoShots.setMaximum(m_totalPercentage);
-                sldPopulationRecovered.setMaximum(m_totalPercentage);
-            }
-
-            if (sldPopulationOneShotClicked)
-            {
-                sldPopulationTwoShots.setEnabled(true);
-                sldPopulationOneShot.setEnabled(false);
-                sldPopulationOneShotClicked = false;
-            }
-        }
-        else if (slider.getName().equals("POP_TWO_SHOTS"))
-        {
-            if (slider.isEnabled())
-            {
-                sldPopulationRecovered.setMaximum(m_totalPercentage);
-            }
-
-            if (sldPopulationTwoShotsClicked)
-            {
-                sldPopulationTwoShots.setEnabled(false);
-                sldPopulationRecovered.setEnabled(true);
-                sldPopulationTwoShotsClicked = false;
-            }
-        }
-        else
-        {
-            if (slider.getValue() < m_totalPercentage && slider.isEnabled())
-            {
-                slider.setValue(m_totalPercentage + slider.getValue());
-                sldPopulationRecovered.setEnabled(false);
-                sldPopulationRecoveredClicked = false;
-            }
-        }
-    }
-
-    private void checkClicked(JSlider slider)
-    {
-        if (slider.getName().equals("POP_SIZE") && slider.isEnabled())
-            sldPopulationSizeClicked = true;
-        else if (slider.getName().equals("POP_NO_VACCINE") && slider.isEnabled())
-            sldPopulationNoVaccineClicked = true;
-        else if (slider.getName().equals("POP_INFECTED") && slider.isEnabled())
-            sldPopulationInfectedClicked = true;
-        else if (slider.getName().equals("POP_ONE_SHOT") && slider.isEnabled())
-            sldPopulationOneShotClicked = true;
-        else if (slider.getName().equals("POP_TWO_SHOTS") && slider.isEnabled())
-            sldPopulationTwoShotsClicked = true;
-        else if (slider.getName().equals("POP_RECOVERED") && slider.isEnabled())
-            sldPopulationRecoveredClicked = true;
+        resetData();
     }
 
     private class MouseListener extends MouseInputAdapter
     {
         private int m_initialValue;
-
-        public void mouseClicked(MouseEvent e)
-        {
-            JSlider source = (JSlider)e.getSource();
-            checkClicked(source);
-        }
-
-        public void mousePressed(MouseEvent e)
-        {
-            JSlider source = (JSlider)e.getSource();
-            checkClicked(source);
-        }
+        private int m_currentPercentage;
 
         public void mouseEntered(MouseEvent e)
         {
+            m_currentPercentage = m_totalPercentage;
+
             JSlider source = (JSlider)e.getSource();
             if (!source.getName().equals("POP_SIZE"))
                 m_initialValue = source.getValue();
@@ -543,20 +408,44 @@ public class PandemicSimulator extends JFrame
 
             if (!source.getName().equals("POP_SIZE"))
             {
-                if (m_initialValue != finalValue)
+                if (finalValue > m_initialValue)
                 {
-                    if (finalValue > m_initialValue)
-                        m_totalPercentage -= (finalValue - m_initialValue);
+                    m_totalPercentage -= (finalValue - m_initialValue);
+                }
+                else
+                {
+                    m_totalPercentage += (m_initialValue - finalValue);
+                }
+
+                if (m_totalPercentage < 0)
+                {
+                    if (m_initialValue > 0 || m_totalPercentage == 0)
+                    {
+                        source.setValue(m_initialValue);
+                    }
                     else
-                        m_totalPercentage += (m_initialValue - finalValue);
+                    {
+                        source.setValue(m_currentPercentage);
+                    }
+
+                    m_totalPercentage = 0;
                 }
             }
             else
             {
-                m_initialPopulationSize = finalValue;
+                if (source.getValue() > m_populationSliderSize / 2)
+                {
+                    m_populationSliderSize *= 2;
+                    source.setMaximum(m_populationSliderSize);
+                }
+
+                m_populationSize = finalValue;
             }
 
-            setMaxSlidersValue(source);
+            if (m_totalPercentage <= 0)
+                btnGenerate.setEnabled(true);
+            else
+                btnGenerate.setEnabled(false);
         }
     }
 

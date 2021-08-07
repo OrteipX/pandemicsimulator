@@ -108,6 +108,12 @@ public class Person
     {
         switch (status)
         {
+            case UNDEF:
+                m_immunityValue = 0;
+                break;
+            case UNDEF_REC:
+                m_immunityValue = 90;
+                break;
             case NO_VACCINE:
                 m_immunityValue = 20;
                 break;

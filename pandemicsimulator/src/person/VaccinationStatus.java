@@ -6,6 +6,8 @@ package person;
 
 public enum VaccinationStatus
 {
+    UNDEF("UNDEF"),
+    UNDEF_REC("UNDEF_REC"),
     NO_VACCINE("NO_VACCINE"),
     ONE_SHOT("ONE_SHOT"),
     TWO_SHOTS("TWO_SHOTS");
