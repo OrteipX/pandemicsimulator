@@ -100,10 +100,10 @@ public class PandemicSimulator extends JFrame
                 + "<br />populations with different levels of immunity.</p>"
                 + "</div>"
                 + "<div style='margin-top: 40px'>"
-                + "<br /><p style='text-align: center'>Abdulmuamen Al Khateb</p>"
-                + "<br /><p style='text-align: center'>Andre Melo</p>"
-                + "<br /><p style='text-align: center'>Bilal Al-muhtadi</p>"
-                + "<br /><p style='text-align: center'>Ramon Garcia</p>"
+                + "<br /><p style='text-align: center'>Abdulmuamen Al Khateb - 0930852</p>"
+                + "<br /><p style='text-align: center'>Andre Melo - 0922836</p>"
+                + "<br /><p style='text-align: center'>Bilal Al-muhtadi - 0957079</p>"
+                + "<br /><p style='text-align: center'>Ramon Garcia - 0926596</p>"
                 + "</div>"
                 + "</html>";
 
